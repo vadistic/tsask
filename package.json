@@ -2,7 +2,7 @@
   "name": "@vadistic/tsask",
   "version": "0.2.0",
   "private": false,
-  "description": "Personal @vadistic utils",
+  "description": "tsask = 'typescript task'",
   "homepage": "https://vadistic.netlify.com",
   "repository": {
     "type": "git",
