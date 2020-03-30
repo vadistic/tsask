@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "declaration": true,
+    "target": "es2018",
+    "lib": ["esnext"],
+
+    "esModuleInterop": true,
+    "strict": true
+  },
+  "include": ["src"],
+  "exclude": ["node_modules", "dist"]
+}
