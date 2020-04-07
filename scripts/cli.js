@@ -14,14 +14,14 @@ require('ts-node').register({
 
     experimentalDecorators: true,
     emitDecoratorMetadata: true,
+
+    allowJs: true,
   },
 
   transpileOnly: true,
-  preferTsExts: true,
+  preferTsExts: false,
   skipProject: true,
   pretty: true,
 })
 
-import { runner } from './runner'
-
-runner()
+require('../src/runner').runner()

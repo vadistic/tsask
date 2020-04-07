@@ -5,6 +5,7 @@ require('ts-node').register({
   compilerOptions: {
     moduleResolution: 'node',
     module: 'commonjs',
+
     target: 'es2018',
     lib: ['dom', 'esnext'],
 
@@ -13,6 +14,8 @@ require('ts-node').register({
 
     experimentalDecorators: true,
     emitDecoratorMetadata: true,
+
+    allowJs: true,
   },
 
   transpileOnly: true,
@@ -21,4 +24,4 @@ require('ts-node').register({
   pretty: true,
 })
 
-require('./runner').runner()
+require('../dist/runner').runner()
