@@ -2,7 +2,8 @@ const code = {
   reset: '\x1b[0m',
   bright: '\x1b[1m',
   dim: '\x1b[2m',
-  //text color
+
+  // text color
 
   black: '\x1b[30m',
   red: '\x1b[31m',
@@ -13,7 +14,7 @@ const code = {
   cyan: '\x1b[36m',
   white: '\x1b[37m',
 
-  //background color
+  // background color
 
   blackBg: '\x1b[40m',
   redBg: '\x1b[41m',

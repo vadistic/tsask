@@ -1,5 +1,5 @@
-import { join } from 'path'
 import { readJSON, writeJSON } from 'fs-extra'
+import { join } from 'path'
 
 export const readPkg = async (cwd: string) => {
   return readJSON(join(cwd, 'package.json'))

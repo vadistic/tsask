@@ -16,4 +16,4 @@ export interface TaskInfo {
   isWorkspace: boolean
 }
 
-export type Task = (args: any, props: TaskProps) => any
+export type Task = (args: any, props: TaskProps) => unknown

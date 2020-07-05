@@ -1,6 +1,7 @@
-import path from 'path'
-import { homedir } from 'os'
 import fs from 'fs-extra'
+import { homedir } from 'os'
+import path from 'path'
+
 import { Logger } from './logger'
 import { Task, TaskProps } from './types'
 
@@ -45,6 +46,7 @@ export const runner = async () => {
   if (path.extname(cmd)) {
     await runFile(props)
   }
+
   // or look for task files
   else {
     const [name, fn] = await findTaskFile(props)
@@ -65,17 +67,17 @@ const HOME_PATH = homedir()
 
 export const getWorkspaceCwd = (maybeCwd = process.cwd(), loop = 0): string | undefined => {
   if (loop > 8 || maybeCwd === HOME_PATH) {
-    return
+    return undefined
   }
 
-  return ROOT_FILES.some((file) => fs.existsSync(path.join(maybeCwd, file)))
+  return ROOT_FILES.some(file => fs.existsSync(path.join(maybeCwd, file)))
     ? maybeCwd
     : getWorkspaceCwd(path.join(maybeCwd, '..'), loop + 1)
 }
 
 export const getPackageCwd = (maybeCwd = process.cwd(), loop = 0): string | undefined => {
   if (loop > 8 || maybeCwd === HOME_PATH) {
-    return
+    return undefined
   }
 
   return fs.existsSync(path.join(maybeCwd, 'package.json'))
@@ -93,7 +95,7 @@ export const runTask = async (props: TaskProps, fn: Task) => {
 
   props.log.start()
 
-  const res = await fn(args, props)
+  const res: any = await fn(args, props)
 
   props.log.end()
 
@@ -112,11 +114,12 @@ export const runFile = async (props: TaskProps) => {
 
     // run main or default export
     if (typeof file?.default === 'function') {
-      console.log(file?.default)
-      return file.default()
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+      await file.default()
     }
     if (typeof file?.main === 'function') {
-      return file.main()
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+      await file.main()
     }
     props.log.end()
   } catch (err) {
@@ -165,19 +168,19 @@ const findTaskFile = async (props: TaskProps) => {
   const isLibTaskTs = () => fs.existsSync(libTaskPathTs)
 
   if (isLocalTask()) {
-    return import(localTaskPath).then((imp) => findTaskFn(props, imp))
+    return import(localTaskPath).then(imp => findTaskFn(props, imp))
   }
 
   if (props.info.isWorkspace && isRootTask()) {
-    return import(rootTaskPath).then((imp) => findTaskFn(props, imp))
+    return import(rootTaskPath).then(imp => findTaskFn(props, imp))
   }
 
   if (isLibTaskJs()) {
-    return import(libTaskPathJs).then((imp) => findTaskFn(props, imp))
+    return import(libTaskPathJs).then(imp => findTaskFn(props, imp))
   }
 
   if (isLibTaskTs()) {
-    return import(libTaskPathTs).then((imp) => findTaskFn(props, imp))
+    return import(libTaskPathTs).then(imp => findTaskFn(props, imp))
   }
 
   return []

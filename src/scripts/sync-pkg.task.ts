@@ -1,9 +1,10 @@
 import sortPkgJson from 'sort-package-json'
+
 import { Task } from '../runner'
-import { readPkg, filterUndefShallow, writePkg } from '../utils/utils'
+import { readPkg, filterUndefShallow, writePkg } from '../utils'
 
 export const sortPkg: Task = async (args, props) => {
-  let pkg = await readPkg(props.paths.package)
+  let pkg: any = await readPkg(props.paths.package)
 
   if (props.info.isWorkspace) {
     props.log.log(`workspace detected, importing fields from root`)
@@ -20,6 +21,7 @@ export const sortPkg: Task = async (args, props) => {
   const addCarret = (field?: { [key: string]: string }) => {
     if (field) {
       Object.entries(field).forEach(([key, val]) => {
+        // eslint-disable-next-line no-param-reassign, no-restricted-globals
         if (!isNaN(val[0] as any)) field[key] = '^' + val
       })
     }
@@ -33,7 +35,7 @@ export const sortPkg: Task = async (args, props) => {
 
   const filtered = filterUndefShallow(sorted)
 
-  writePkg(props.paths.package, filtered)
+  void writePkg(props.paths.package, filtered)
 
   props.log.log(`package.json sorted!`)
 }
