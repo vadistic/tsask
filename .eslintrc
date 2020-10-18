@@ -1,12 +1,7 @@
 {
-  "extends": ["@vadistic/eslint-config/base", "@vadistic/eslint-config/preset/prettier"],
+  "extends": ["@vadistic/eslint-config", "@vadistic/eslint-config/prettier"],
 
   "parserOptions": {
     "project": "./tsconfig.json"
-  },
-
-  "rules": {
-    "@typescript-eslint/no-unsafe-return": "off",
-    "@typescript-eslint/no-unsafe-assignment": "off"
   }
 }
