@@ -1,6 +1,6 @@
 {
   "name": "@vadistic/tsask",
-  "version": "0.2.2",
+  "version": "0.3.0",
   "private": false,
   "description": "tsask = 'typescript task'",
   "repository": {
@@ -14,8 +14,8 @@
     "tsask": "bin/cli.js"
   },
   "scripts": {
-    "build": "tsc -p ./tsconfig.build.json",
     "clean": "rm -rf dist",
+    "build": "tsc -p ./tsconfig.build.json",
     "dev": "node scripts/cli.js",
     "format": "prettier --write src/**/*.ts",
     "lint": "eslint --ext .ts src/**/*",
