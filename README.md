@@ -4,6 +4,9 @@
 
 Inspired by [`./task.js`](https://gist.github.com/substack/8313379).
 
+[NPM](https://www.npmjs.com/package/@vadistic/tsask) |
+[GITHUB](https://github.com/vadistic/tsask)
+
 ## Why
 
 - yeah, it's just `ts-node --transpileOnly`
