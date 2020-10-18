@@ -15,15 +15,16 @@
   },
   "scripts": {
     "build": "tsc -p ./tsconfig.build.json",
-    "typecheck": "tsc -p ./tsconfig.json --noEmit",
     "clean": "rm -rf dist",
-    "start": "node bin/cli.js",
     "dev": "node scripts/cli.js",
     "format": "prettier --write src/**/*.ts",
     "lint": "eslint --ext .ts src/**/*",
+    "prepublishOnly": "yarn format && yarn lint && yarn clean && yarn build",
+    "start": "node bin/cli.js",
     "test": "jest",
-    "prepublishOnly": "yarn format && yarn lint && yarn clean && yarn build"
+    "typecheck": "tsc -p ./tsconfig.json --noEmit"
   },
+  "prettier": "@vadistic/prettier-config",
   "dependencies": {
     "case": "^1.6.3",
     "cosmiconfig": "^7.0.0",
@@ -48,6 +49,5 @@
   },
   "publishConfig": {
     "access": "public"
-  },
-  "prettier": "@vadistic/prettier-config"
+  }
 }

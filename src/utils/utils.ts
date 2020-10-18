@@ -20,3 +20,13 @@ export const filterUndefShallow = (input: any) => {
 
   return res
 }
+
+// add ^ to version
+export const addCarret = (fields?: { [key: string]: string }) => {
+  if (fields) {
+    Object.entries(fields).forEach(([key, val]) => {
+      // eslint-disable-next-line no-param-reassign, no-restricted-globals
+      if (!isNaN(val[0] as any)) fields[key] = '^' + val
+    })
+  }
+}
