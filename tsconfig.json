@@ -7,8 +7,9 @@
     "lib": ["esnext"],
 
     "esModuleInterop": true,
-    "strict": true
+    "strict": true,
+    "allowJs": false
   },
-  "include": ["src"],
+  "include": ["src", "test"],
   "exclude": ["node_modules", "dist"]
 }

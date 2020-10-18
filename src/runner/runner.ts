@@ -1,27 +1,26 @@
 import fs from 'fs-extra'
-import { homedir } from 'os'
 import path from 'path'
 
 import { Logger } from './logger'
+import { getRoots } from './roots'
 import { Task, TaskProps } from './types'
 
 /**
- * Run task from local or root dir, it's jsut ts-node, but
+ * Run task from local or root dir, it's just ts-node, but
  * - with simplified paths
  * - parsed args
  * - logger
  * - TODO: some chaining/pararel util
  */
 export const runner = async () => {
-  const workspaceCwd = getWorkspaceCwd()
-  const packageCwd = getPackageCwd()
+  const roots = getRoots()
 
   const cmd = process.argv[2]
-  const scope = path.basename(packageCwd ?? workspaceCwd ?? 'project')
+  const scope = path.basename(roots.project ?? roots.workspace ?? 'project')
   const logger = new Logger(`${scope}/${cmd || 'task'}`)
 
-  if (!workspaceCwd || !packageCwd) {
-    logger.error(`could not resolve package/workspace cwd. Is yarn.lock present?`)
+  if (!roots.project) {
+    logger.error(`could not resolve package root path`)
     return
   }
 
@@ -34,11 +33,11 @@ export const runner = async () => {
     log: logger,
     info: {
       cmd,
-      isWorkspace: packageCwd !== workspaceCwd,
+      isWorkspace: !!roots.workspace,
     },
     paths: {
-      package: packageCwd,
-      workspace: workspaceCwd,
+      project: roots.project,
+      workspace: roots.workspace,
     },
   }
 
@@ -58,31 +57,6 @@ export const runner = async () => {
 
     await runTask(props, fn)
   }
-}
-
-// ────────────────────────────────────────────────────────────────────────────────
-
-const ROOT_FILES = ['yarn.lock', '.git', 'package-lock.json']
-const HOME_PATH = homedir()
-
-export const getWorkspaceCwd = (maybeCwd = process.cwd(), loop = 0): string | undefined => {
-  if (loop > 8 || maybeCwd === HOME_PATH) {
-    return undefined
-  }
-
-  return ROOT_FILES.some(file => fs.existsSync(path.join(maybeCwd, file)))
-    ? maybeCwd
-    : getWorkspaceCwd(path.join(maybeCwd, '..'), loop + 1)
-}
-
-export const getPackageCwd = (maybeCwd = process.cwd(), loop = 0): string | undefined => {
-  if (loop > 8 || maybeCwd === HOME_PATH) {
-    return undefined
-  }
-
-  return fs.existsSync(path.join(maybeCwd, 'package.json'))
-    ? maybeCwd
-    : getPackageCwd(path.join(maybeCwd, '..'), loop + 1)
 }
 
 // ────────────────────────────────────────────────────────────────────────────────
@@ -110,7 +84,7 @@ export const runFile = async (props: TaskProps) => {
 
   try {
     // resolve by local project cwd
-    const file = await import(path.join(props.paths.package, props.info.cmd))
+    const file = await import(path.join(props.paths.project, props.info.cmd))
 
     // run main or default export
     if (typeof file?.default === 'function') {
@@ -151,35 +125,32 @@ const findTaskFn = (props: TaskProps, imported: any): [string, Task] | [] => {
 const TASK_DIR = 'scripts'
 const TASK_EXT = '.task'
 
-const TS = '.ts'
-const JS = '.js'
+const EXT_TS = '.ts'
+const EXT_JS = '.js'
 
 const findTaskFile = async (props: TaskProps) => {
   const filename = props.info.cmd + TASK_EXT
 
-  const localTaskPath = path.join(props.paths.package, TASK_DIR, filename + TS)
-  const rootTaskPath = path.join(props.paths.workspace, TASK_DIR, filename + TS)
-  const libTaskPathJs = path.join(__dirname, '..', TASK_DIR, filename + JS)
-  const libTaskPathTs = path.join(__dirname, '..', TASK_DIR, filename + TS)
+  const libTaskPathJs = path.join(__dirname, '..', TASK_DIR, filename + EXT_JS)
+  const libTaskPathTs = path.join(__dirname, '..', TASK_DIR, filename + EXT_TS)
 
-  const isLocalTask = () => fs.existsSync(localTaskPath)
-  const isRootTask = () => fs.existsSync(rootTaskPath)
-  const isLibTaskJs = () => fs.existsSync(libTaskPathJs)
-  const isLibTaskTs = () => fs.existsSync(libTaskPathTs)
+  const projectTaskPath = path.join(props.paths.project, TASK_DIR, filename + EXT_TS)
+  const workspaceTaskPath =
+    props.paths.workspace && path.join(props.paths.workspace, TASK_DIR, filename + EXT_TS)
 
-  if (isLocalTask()) {
-    return import(localTaskPath).then(imp => findTaskFn(props, imp))
+  if (fs.existsSync(projectTaskPath)) {
+    return import(projectTaskPath).then(imp => findTaskFn(props, imp))
   }
 
-  if (props.info.isWorkspace && isRootTask()) {
-    return import(rootTaskPath).then(imp => findTaskFn(props, imp))
+  if (workspaceTaskPath && fs.existsSync(workspaceTaskPath)) {
+    return import(workspaceTaskPath).then(imp => findTaskFn(props, imp))
   }
 
-  if (isLibTaskJs()) {
+  if (fs.existsSync(libTaskPathJs)) {
     return import(libTaskPathJs).then(imp => findTaskFn(props, imp))
   }
 
-  if (isLibTaskTs()) {
+  if (fs.existsSync(libTaskPathTs)) {
     return import(libTaskPathTs).then(imp => findTaskFn(props, imp))
   }
 

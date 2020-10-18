@@ -2,8 +2,6 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "noEmit": false,
-    "allowJs": false,
-
     "rootDir": "src",
     "outDir": "dist"
   },

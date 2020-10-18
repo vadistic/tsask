@@ -4,17 +4,19 @@ import { Task } from '../runner'
 import { readPkg, filterUndefShallow, writePkg } from '../utils'
 
 export const sortPkg: Task = async (args, props) => {
-  let pkg: any = await readPkg(props.paths.package)
+  let pkg: any = await readPkg(props.paths.project)
 
-  if (props.info.isWorkspace) {
-    props.log.log(`workspace detected, importing fields from root`)
+  if (props.paths.workspace) {
+    props.log.log(`workspace detected, importing  some fields from root package.json`)
 
-    // just hese fields
+    // just these fields
     const { description, homepage, repository, license, author } = await readPkg(
       props.paths.workspace,
     )
 
     pkg = { description, homepage, repository, license, author, ...pkg }
+
+    return
   }
 
   // add ^ to version
@@ -35,7 +37,7 @@ export const sortPkg: Task = async (args, props) => {
 
   const filtered = filterUndefShallow(sorted)
 
-  void writePkg(props.paths.package, filtered)
+  void writePkg(props.paths.project, filtered)
 
   props.log.log(`package.json sorted!`)
 }

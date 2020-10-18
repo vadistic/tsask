@@ -7,8 +7,8 @@ export interface TaskProps {
 }
 
 export interface TaskPaths {
-  workspace: string
-  package: string
+  project: string
+  workspace?: string
 }
 
 export interface TaskInfo {
