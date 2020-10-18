@@ -30,7 +30,7 @@ export const runner = async () => {
   }
 
   const props: TaskProps = {
-    log: logger,
+    logger,
     info: {
       cmd,
       isWorkspace: !!roots.workspace,
@@ -67,11 +67,11 @@ export const runner = async () => {
 export const runTask = async (props: TaskProps, fn: Task) => {
   const args = process.argv.slice(3)
 
-  props.log.start()
+  props.logger.start()
 
   const res: any = await fn(args, props)
 
-  props.log.end()
+  props.logger.end()
 
   return res
 }
@@ -80,7 +80,7 @@ export const runTask = async (props: TaskProps, fn: Task) => {
  * runs any .ts file
  */
 export const runFile = async (props: TaskProps) => {
-  props.log.start()
+  props.logger.start()
 
   try {
     // resolve by local project cwd
@@ -95,9 +95,9 @@ export const runFile = async (props: TaskProps) => {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-call
       await file.main()
     }
-    props.log.end()
+    props.logger.end()
   } catch (err) {
-    props.log.error(err.message)
+    props.logger.error(err.message)
   }
 }
 

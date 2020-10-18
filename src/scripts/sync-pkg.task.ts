@@ -14,5 +14,5 @@ export const sortPkg: Task = async (args, props) => {
 
   await writePkg(props.paths.project, sorted)
 
-  props.log.log(`package.json sorted!`)
+  props.logger.log(`package.json sorted!`)
 }

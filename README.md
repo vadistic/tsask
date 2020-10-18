@@ -32,7 +32,13 @@ yarn add -D @vadistic/tsask
 // scripts/hello.task.ts
 
 export const whatever = () => {
-  console.log('Hello!)
+  console.log('Hello!')
+}
+
+// or with build-in logger
+
+export const whatever = (args, { logger }) => {
+  logger.log('Hello!')
 }
 ```
 

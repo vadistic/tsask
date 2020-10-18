@@ -7,7 +7,7 @@ export const sortPkg: Task = async (args, props) => {
   let pkg: any = await readPkg(props.paths.project)
 
   if (props.paths.workspace) {
-    props.log.log(`workspace detected, importing  some fields from root package.json`)
+    props.logger.log(`workspace detected, importing  some fields from root package.json`)
 
     // just these fields
     const { description, homepage, repository, license, author } = await readPkg(
@@ -29,5 +29,5 @@ export const sortPkg: Task = async (args, props) => {
 
   await writePkg(props.paths.project, filtered)
 
-  props.log.log(`package.json synced!`)
+  props.logger.log(`package.json synced!`)
 }
