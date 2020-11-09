@@ -2,4 +2,4 @@
 
 require('./register')
 
-require('../dist/runner').runner()
+require('../src/runner').runner()
